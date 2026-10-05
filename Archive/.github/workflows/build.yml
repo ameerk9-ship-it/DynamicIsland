@@ -1,0 +1,29 @@
+name: Build DynamicIsland.app
+
+# يشتغل تلقائيًا عند أي push، أو يدويًا من تبويب Actions
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14   # جهاز Mac حقيقي مجاني من GitHub، فيه Xcode مثبت مسبقًا
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build with swiftc
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Zip the .app
+        run: |
+          cd build
+          zip -r DynamicIsland-app.zip DynamicIsland.app
+
+      - name: Upload .app as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DynamicIsland-app
+          path: build/DynamicIsland-app.zip
